@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madlibs Form</title>
+</head>
+<body>
+    <h1><b>Madlibs</b></h1>
+    <form action="/story">
+        {% for prompt in prompts %}
+            <label for="{{prompt}}">
+                {{prompt.capitalize()}}: <input type="text" id="{{prompt}}" name="{{prompt}}">
+            </label>
+            <br>
+        {% endfor %}
+
+        <button type="submit">Submit</button>
+    </form>
+    
+</body>
+</html>
