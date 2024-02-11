@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <form action="/questions/post", method="post">
+    <form action="/answer", method="post">
         <h1>{{question}}</h1>
         {% for msg in get_flashed_messages() %}
             <p>{{msg}}</p>

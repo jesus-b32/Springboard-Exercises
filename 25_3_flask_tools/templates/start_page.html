@@ -8,6 +8,8 @@
     <h2>Instructions:</h2>
     <p>{{instructions}}</p>
 
-    <a href="/questions/0" class="btn">Start!</a>
+    <form action="/start_survey/post" method="post">
+        <button type="submit">Start</button>
+    </form>
 
 {% endblock %}
