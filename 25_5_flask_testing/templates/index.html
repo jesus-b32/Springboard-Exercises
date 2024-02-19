@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boggle Game</title>
+    <link rel="stylesheet" href="/static/boggle.css">
+</head>
+<body>
+    <h1>Welcome to Boggle Game!</h1>
+
+    <table class="" id="boggle_board"> 
+        <tbody>
+            {% for row in game_board %}
+                <tr>
+                    {% for letter in row %}
+                        <td>{{letter}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- <p>{{game_board}}</p> -->
+    <form id="boggleForm">
+        <h2>Instructions:</h2>
+        <p>
+            The goal of the game is to get the highest point total. To gain points, players create words from a random assortment of letters in a 5x5 grid. Words can be created from adjacent letters – that is, letters which are horizontal or vertical neighbors of each other as well as diagonals. The letters must connect to each other in the proper sequence to spell the word correctly. This means that the next letter in the word can be above, below, left, or right of the previous letter in the word (excluding any letters previously used to construct the word).
+        </p>
+        <label for="guess_input">Enter a Word Guess: </label>
+        <input type="text" name="word" id="guess_input">
+        <button type="submit" id="submit_word">Submit</button>
+    </form>
+
+    <p id="message">
+        <!-- JS will dynamically dsiplay result message of user word entered -->
+    </p>
+
+    <p>
+        Score: <b id="score">0</b>
+    </p>
+
+    <p>
+        Timer: <b id="timer">60s</b>
+    </p>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/static/boggle.js"></script>
+</body>
+</html>
