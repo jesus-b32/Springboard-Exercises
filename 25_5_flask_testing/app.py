@@ -15,8 +15,12 @@ boggle_game = Boggle()
 def display_boggle_board():
     game_board = boggle_game.make_board()
     session['game_board'] = game_board
+    highest_score = session.get('highest_score', 0) #defaults to 0 if there is no highscore value
+    number_of_games = session.get('number_of_games', 0) #defaults to 0 if there is no num of games value
     
-    return render_template('index.html', game_board = game_board)
+    return render_template('index.html', game_board = game_board,
+                           highest_score = highest_score,
+                           number_of_games = number_of_games)
 
 
 #good
@@ -28,3 +32,18 @@ def check_word():
     # print("Return of the checkvalid word function: ", response)
     
     return jsonify({'result': response})
+
+@app.route('/game_over', methods = ['POST'])
+def game_over():
+    highest_score = session.get('highest_score', 0)
+    number_of_games = session.get('number_of_games', 0)
+    score = request.json['score']
+    
+    new_record = score > highest_score
+    if(new_record):
+        session['highest_score'] = score
+        
+    session['number_of_games'] = number_of_games + 1
+    # print('the value of Score: ', score)
+    
+    return jsonify(new_record)

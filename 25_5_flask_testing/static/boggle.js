@@ -5,6 +5,8 @@ class BoggleGame{
         this.seconds = seconds;
         this.score = 0;
         this.wordsUsed = new Set
+        this.highestScore = 0;
+        // this.numOfGames = 0;
         // this.wordInput = document.querySelector('#guess_input')
         this.timer = setInterval(this.tick.bind(this), 1000); // run tick function every second
         this.boggleForm = document.querySelector('#boggleForm');
@@ -51,9 +53,19 @@ class BoggleGame{
         document.querySelector('#timer').innerText = `${this.seconds}s`;
     }
 
-    gameOver() {
+    async gameOver() {
         this.board.classList.toggle('hide');
         this.boggleForm.classList.toggle('hide');
+        
+        const response = await axios.post(`/game_over`, {score: this.score});
+        console.log('post response new record: ', response.data.new_record);
+        if(response.data.new_record) { // did not display this message even though i got a new record
+            this.showMessage(`You Set a New Record: ${this.score}`);
+        } else {
+            this.showMessage(`Final Score: ${this.score}`);
+        }
+
+
     }
 
     async tick() {
