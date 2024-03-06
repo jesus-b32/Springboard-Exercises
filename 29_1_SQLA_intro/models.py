@@ -49,3 +49,12 @@ class User(db.Model):
         """Get all pets matching that species."""
 
         return cls.query.filter_by(species=species).all()
+    
+    
+def get_full_name(self):
+    
+    """Return the full name of a user
+    """
+    u = self # current user
+    
+    return f"u.first_name u.last_name"

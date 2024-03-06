@@ -25,24 +25,40 @@ db.create_all()
 
 
 @app.route("/")
-def user_listing():
+def homepage():
     """List users and an add user button"""
 
     users = User.query.all()
-    return render_template("list.html", users=users)
+    
+    
+    return redirect('/users')
+    # return render_template("list.html", users=users)
 
 
+@app.route("/users")
+def user_list():
+    """List users and an add user button."""
+    
+    # user_full_name = []
+    users = User.query.all()
+    
+    # for user in users:
+    #     user_full_name.append(user.get_full_name(), users=users)
+        
+    
+    return render_template("user_list.html", users=users)
 
-@app.route("/new_user")
+
+@app.route("/users/new")
 def new_user_page():
-    """Display a create user form."""
+    """Display a create a user form."""
     
 
-    return render_template("new_user.html")
+    return render_template("add_user.html")
 
 
 
-@app.route("/new_user", methods=["POST"])
+@app.route("/users/new", methods=["POST"])
 def add_user():
     """Add user and redirect to list of users."""
 
@@ -54,38 +70,49 @@ def add_user():
     db.session.add(user)
     db.session.commit()
 
-    return redirect(f"/")
+    return redirect(f"/users")
 
 
-@app.route("/<int:user_id>")
+@app.route("/users/<int:user_id>")
 def user_detail(user_id):
     """Show detail info on a single user."""
 
     user = User.query.get_or_404(user_id)
-    return render_template("detail.html", user=user)
+    return render_template("user_detail.html", user=user)
 
 
-@app.route("/<int:user_id>/edit")
+@app.route("/users/<int:user_id>/edit")
 def edit_user_page(user_id):
     """Display edit form for a user."""
 
-    user = User.query.get_or_404(user_id)
-    return render_template("edit.html", user=user)
+    # user = User.query.get_or_404(user_id)
+    
+    
+    return render_template("edit_user.html", user=user)
 
 
-@app.route("/<int:user_id>/edit", methods=['POST'])
+@app.route("/users/<int:user_id>/edit", methods=['POST'])
 def edit_user(user_id):
     """Edit user and redirect to user detail page."""
-
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    image_url = request.form['image_url']
     user = User.query.get_or_404(user_id)
-    return redirect(f"/<int:user_id>")
+    
+    user.first_name = first_name
+    user.last_name = last_name
+    user.image_url = image_url
+    
+    db.session.commit()   
+    
+    return redirect("/users")
 
 
-@app.route("/<int:user_id>/delete")
+@app.route("/users/<int:user_id>/delete", methods=['POST'])
 def delete_user(user_id):
     """Delete a user and redirect to user listing."""
 
     User.query.get_or_404(user_id).delete()
     db.session.commit()
     
-    return redirect(f"/")
+    return redirect("/users")
