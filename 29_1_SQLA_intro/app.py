@@ -12,14 +12,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
+# Connect to database and create all tables
+connect_db(app)
+# db.create_all()
+
+
 #debugtoolbar setup
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 debug = DebugToolbarExtension(app)
 
-# Connect to database and create all tables
-connect_db(app)
-db.create_all()
 
 
 
@@ -27,8 +29,8 @@ db.create_all()
 @app.route("/")
 def homepage():
     """List users and an add user button"""
-
-    users = User.query.all()
+    
+    # users = User.query.all()
     
     
     return redirect('/users')
@@ -43,10 +45,15 @@ def user_list():
     users = User.query.all()
     
     # for user in users:
-    #     user_full_name.append(user.get_full_name(), users=users)
+    #     user_full_name.append(user.get_full_name())
+    
+        #     <!-- {% for i in range(len(users)) %}
+        # <li><a href="/users/{{users[i].id}}">{{user.get_full_name}}</a></li>
+        # {% endfor %} -->
         
     
     return render_template("user_list.html", users=users)
+    # return render_template("user_list.html", users=users, user_full_name=user_full_name)
 
 
 @app.route("/users/new")
@@ -88,7 +95,7 @@ def edit_user_page(user_id):
     # user = User.query.get_or_404(user_id)
     
     
-    return render_template("edit_user.html", user=user)
+    return render_template("edit_user.html")
 
 
 @app.route("/users/<int:user_id>/edit", methods=['POST'])

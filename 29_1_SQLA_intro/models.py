@@ -25,7 +25,7 @@ class User(db.Model):
     last_name = db.Column(db.String(20),
                      nullable=False,
                      unique=False)
-    image_url = db.Column(db.String(100), nullable=False)
+    image_url = db.Column(db.String(500), nullable=False)
 
     def greet(self):
         """Greet using name."""
@@ -57,4 +57,4 @@ def get_full_name(self):
     """
     u = self # current user
     
-    return f"u.first_name u.last_name"
+    return f"{u.first_name} {u.last_name}"
