@@ -14,7 +14,6 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 # Connect to database and create all tables
 connect_db(app)
-# db.create_all()
 
 
 #debugtoolbar setup
@@ -24,42 +23,25 @@ debug = DebugToolbarExtension(app)
 
 
 
-
-
 @app.route("/")
 def homepage():
-    """List users and an add user button"""
-    
-    # users = User.query.all()
-    
+    """List users and an add user button""" 
     
     return redirect('/users')
-    # return render_template("list.html", users=users)
 
 
 @app.route("/users")
 def user_list():
     """List users and an add user button."""
     
-    # user_full_name = []
-    users = User.query.all()
-    
-    # for user in users:
-    #     user_full_name.append(user.get_full_name())
-    
-        #     <!-- {% for i in range(len(users)) %}
-        # <li><a href="/users/{{users[i].id}}">{{user.get_full_name}}</a></li>
-        # {% endfor %} -->
-        
+    users = User.query.order_by(User.last_name, User.first_name).all()
     
     return render_template("user_list.html", users=users)
-    # return render_template("user_list.html", users=users, user_full_name=user_full_name)
 
 
 @app.route("/users/new")
 def new_user_page():
     """Display a create a user form."""
-    
 
     return render_template("add_user.html")
 
@@ -77,7 +59,7 @@ def add_user():
     db.session.add(user)
     db.session.commit()
 
-    return redirect(f"/users")
+    return redirect("/users")
 
 
 @app.route("/users/<int:user_id>")
@@ -92,23 +74,19 @@ def user_detail(user_id):
 def edit_user_page(user_id):
     """Display edit form for a user."""
 
-    # user = User.query.get_or_404(user_id)
+    user = User.query.get_or_404(user_id)
     
-    
-    return render_template("edit_user.html")
+    return render_template("edit_user.html", user=user)
 
 
 @app.route("/users/<int:user_id>/edit", methods=['POST'])
 def edit_user(user_id):
     """Edit user and redirect to user detail page."""
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    image_url = request.form['image_url']
     user = User.query.get_or_404(user_id)
     
-    user.first_name = first_name
-    user.last_name = last_name
-    user.image_url = image_url
+    user.first_name = request.form['first_name']
+    user.last_name = request.form['last_name']
+    user.image_url = request.form['image_url']
     
     db.session.commit()   
     
@@ -119,7 +97,9 @@ def edit_user(user_id):
 def delete_user(user_id):
     """Delete a user and redirect to user listing."""
 
-    User.query.get_or_404(user_id).delete()
-    db.session.commit()
+    item_to_delete = User.query.get_or_404(user_id)
+    if item_to_delete:
+        db.session.delete(item_to_delete)
+        db.session.commit()
     
     return redirect("/users")
