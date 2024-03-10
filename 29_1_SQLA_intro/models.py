@@ -19,13 +19,13 @@ class User(db.Model):
     id = db.Column(db.Integer,
                    primary_key=True,
                    autoincrement=True)
-    first_name = db.Column(db.String(20), #use Text instead of String() next time for no character lemgth limit
+    first_name = db.Column(db.Text,
                      nullable=False,
                      unique=False)
-    last_name = db.Column(db.String(20),
+    last_name = db.Column(db.Text,
                      nullable=False,
                      unique=False)
-    image_url = db.Column(db.String(500), nullable=False)
+    image_url = db.Column(db.Text, nullable=False)
     
     @property
     def full_name(self):
@@ -35,3 +35,24 @@ class User(db.Model):
         u = self # current user
         
         return f"{u.first_name} {u.last_name}"
+
+
+
+class Post(db.Model):
+    """posts"""
+
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+    title = db.Column(db.Text,
+                     nullable=False,
+                     unique=False)
+    content = db.Column(db.Text,
+                     nullable=False,
+                     unique=False)
+    created_at = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('users.id'),
+                        nullable=False)
