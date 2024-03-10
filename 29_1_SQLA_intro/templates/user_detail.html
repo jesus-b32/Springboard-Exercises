@@ -1,25 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}User Detail{% endblock %}
+{% block title %}{{user.full_name}}{% endblock %}
 
 {% block content %}
 
-    <h1>{{user.get_full_name}}</h1>
 
-    <!-- <img src="{{user.image_url}}" alt="Profile Image">
-
-
-    <form action="/users/{{user.id}}/edit">
-        <button type="submit">Edit</button>
-    </form>
-
-    <form action="/users/{{user.id}}/delete" method="post">
-        <button type="submit">Delete</button>
-    </form> -->
-
-
-    <div class="row">
-
+    <div class="row mt-3 ms-3">
         {% if user.image_url %}
         <div class="col-sm-1 col-6">
           <img src="{{ user.image_url }}"
@@ -33,16 +19,17 @@
           <form>
             <button class="btn btn-primary btn-sm"
                     formaction="/users/{{ user.id }}/edit"
-                    formmethod="GET">Edit
+                    formmethod="GET">
+                    Edit
             </button>
             <button class="btn btn-danger btn-sm"
                     formaction="/users/{{ user.id }}/delete"
-                    formmethod="POST">Delete
+                    formmethod="POST">
+                    Delete
             </button>
           </form>
-      
         </div>
-      </div>   
+    </div>   
 
 
 {% endblock %}

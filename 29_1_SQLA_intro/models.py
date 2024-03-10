@@ -19,7 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer,
                    primary_key=True,
                    autoincrement=True)
-    first_name = db.Column(db.String(20), #use Text instead of String() next time
+    first_name = db.Column(db.String(20), #use Text instead of String() next time for no character lemgth limit
                      nullable=False,
                      unique=False)
     last_name = db.Column(db.String(20),
@@ -28,7 +28,7 @@ class User(db.Model):
     image_url = db.Column(db.String(500), nullable=False)
     
     @property
-    def get_full_name(self):
+    def full_name(self):
     
         """Return the full name of a user
         """
