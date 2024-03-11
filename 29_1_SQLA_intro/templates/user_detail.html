@@ -35,12 +35,23 @@
     <h2 class="mx-5">Posts</h1>
 
     <ul class="mx-5">
-        <!-- {% for user in users %}
-        <li><a href="/users/{{user.id}}">{{ user.full_name }}</a></li>
-        {% endfor %} -->
+        {% for post in posts %}
+        <li><a href="/posts/{{post.id}}">{{ post.title }}</a></li>
+        {% endfor %}
     </ul>
 
-    <a class="btn btn-sm btn-primary mx-5" href="/users/new">Add Post</a>
+    <form class="mx-5">
+      <button class="btn btn-secondary btn-sm"
+              formaction="/users"
+              formmethod="GET">
+              User List
+      </button>
+      <button class="btn btn-primary btn-sm"
+              formaction="/users/{{user.id}}/posts/new"
+              formmethod="GET">
+              Add Post
+      </button>
+    </form>
 
 
 {% endblock %}

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User
+from models import db, User, Post, example_data
 
 
 # Use test database and don't clutter tests with SQL
@@ -23,16 +23,12 @@ class BloggyTestCase(TestCase):
 
     def setUp(self):
         """Stuff to do before every test."""
-        with app.app_context():
-            User.query.delete()
-
-        user = User(first_name="John", last_name="Doe", image_url='https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/1200px-Smiley.svg.png')
         
         with app.app_context():
-            db.session.add(user)
-            db.session.commit()
+            # User.query.delete()    
+            # Post.query.delete()  
+            example_data()  
 
-        # self.user_id = user.id
         self.client = app.test_client()
             
     def tearDown(self):
@@ -65,14 +61,14 @@ class BloggyTestCase(TestCase):
         """Test if new user is added is to user list page
         """
         with self.client:
-            data = {'first_name': 'Jane',
-                    'last_name': 'Smith',
+            data = {'first_name': 'Juan',
+                    'last_name': 'Sanchez',
                     'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/1200px-Smiley.svg.png'}
             response = self.client.post("/users/new", data=data, follow_redirects=True)
             html = response.get_data(as_text=True)
 
             self.assertEqual(response.status_code, 200)
-            self.assertIn('<li><a href="/users/2">Jane Smith</a></li>', html)\
+            self.assertIn('<li><a href="/users/3">Juan Sanchez</a></li>', html)
                 
                 
     def test_delete_user(self):
@@ -83,5 +79,41 @@ class BloggyTestCase(TestCase):
             html = response.get_data(as_text=True)
 
             self.assertEqual(response.status_code, 200)
-            self.assertNotIn('<li><a href="/users/1">John Doe</a></li>', html)
+            self.assertNotIn('<li><a href="/users/2">John Doe</a></li>', html)
+            
+ ################################################################################### Post test                 
+    
+    def test_post_detail(self):
+        """Test if post 1 is displayed in user detail page
+        """
+        with self.client:
+            response = self.client.get(f"/users/1")
+            html = response.get_data(as_text=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('<li><a href="/posts/1">First Post</a></li>', html)   
+            
+            
+    def test_add_post(self):
+        """Test if new post is added is to user detail page
+        """
+        with self.client:
+            data = {'title': 'Test Post',
+                    'content': 'testing 123',
+                    'user_id': 1}
+            response = self.client.post("/users/1/posts/new", data=data, follow_redirects=True)
+            html = response.get_data(as_text=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('<li><a href="/posts/5">Test Post</a></li>', html)
+
+    def test_delete_post(self):
+        """Test if post 1 is deleted from user list page
+        """
+        with self.client:
+            response = self.client.post("/posts/1/delete", follow_redirects=True)
+            html = response.get_data(as_text=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertNotIn('<li><a href="/posts/1">First Post</a></li>', html)
         
