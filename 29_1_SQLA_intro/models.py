@@ -59,6 +59,8 @@ class Post(db.Model):
                         db.ForeignKey('users.id'), #ondelete='CASCADE'
                         nullable=False)
     users = db.relationship('User')
+    tags = db.relationship('Tag',
+                           backref = 'posts')
     
     @property
     def friendly_date(self):
@@ -66,7 +68,35 @@ class Post(db.Model):
 
         return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
     
+
+
+class Tag(db.Model):
+    """tags"""
+
+    __tablename__ = "tags"
+
+    id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+    name = db.Column(db.Text,
+                     unique = True)
     
+
+class PostTag(db.Model):
+    """post_tags"""
+
+    __tablename__ = "post_tags"
+
+    post_id = db.Column(db.Integer,
+                   db.ForeignKey('posts.id')
+                   primary_key=True,
+                   nullable=False)
+    tag_id = db.Column(db.Text,
+                     db.ForeignKey('tags.id')
+                     primary_key=True,
+                     nullable=False)
+
+
 
 def example_data():
     """Create some sample data."""

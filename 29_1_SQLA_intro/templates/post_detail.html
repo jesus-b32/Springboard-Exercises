@@ -10,6 +10,13 @@
     <p>{{post.content}}</p>
 
     <h4><i>By {{post.users.full_name}}</i></h4>
+
+    <h4>
+        <b>Tags: </b>
+        {% for tag in tags %}
+        <span class="badge bg-primary">{{tag.name}}</span>
+        {% endfor %}
+    </h4>
  
     <form>
         <button class="btn btn-primary btn-sm"
