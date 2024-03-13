@@ -11,13 +11,16 @@
 
     <h4><i>By {{post.users.full_name}}</i></h4>
 
+    {% if tags %}
     <h4>
         <b>Tags: </b>
         {% for tag in tags %}
-        <span class="badge bg-primary">{{tag.name}}</span>
+        <a href="/tags/{{ tag.id }}"><i class="badge badge-primary">{{ tag.name }}</i></a>
+        <!-- <span class="badge bg-primary">{{tag.name}}</span> -->
         {% endfor %}
     </h4>
- 
+    {% endif %}
+
     <form>
         <button class="btn btn-primary btn-sm"
                 formaction="/posts/{{ post.id }}/edit"

@@ -9,14 +9,14 @@
     <h1 class="mx-5">{{tag.name}}</h1>
 
     <ul class="mx-5">
-        {% for tag in tags %}
-        <li><a href="/">{{ tag.posts.title }}</a></li>
+        {% for post in tag.posts %}
+        <li><a href="/">{{ post.title }}</a></li>
         {% endfor %}
     </ul>
 
 
-    <form class="mx-5" action="/" method="post">
-        <a href="/" class="btn btn-primary">Edit</a>
+    <form class="mx-5" action="/tags/{{ tag.id }}/delete" method="post">
+        <a href="/tags/{{ tag.id }}/edit" class="btn btn-primary">Edit</a>
         <button class="btn btn-danger btn-sm" type="submit">Delete</button>
     </form>
 
