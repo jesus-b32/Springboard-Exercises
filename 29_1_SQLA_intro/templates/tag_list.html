@@ -10,7 +10,7 @@
 
     <ul class="mx-5">
         {% for tag in tags %}
-        <li><a href="/">{{ tag.name }}</a></li>
+        <li><a href="/tags/{{tag.id}}">{{ tag.name }}</a></li>
         {% endfor %}
     </ul>
 

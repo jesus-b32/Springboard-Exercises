@@ -28,7 +28,7 @@ class User(db.Model):
                      unique=False)
     image_url = db.Column(db.Text, nullable=False)
     
-    posts = db.relationship("Post", cascade="all, delete")
+    posts = db.relationship("Post", back_populates="users",cascade="all, delete", passive_deletes=True)
     
     @property
     def full_name(self):
@@ -56,11 +56,9 @@ class Post(db.Model):
                            nullable=False,
                            default=datetime.datetime.now)
     user_id = db.Column(db.Integer,
-                        db.ForeignKey('users.id'), #ondelete='CASCADE'
+                        db.ForeignKey('users.id', ondelete='CASCADE'), #ondelete='CASCADE'
                         nullable=False)
-    users = db.relationship('User')
-    tags = db.relationship('Tag',
-                           backref = 'posts')
+    users = db.relationship('User', back_populates="posts")
     
     @property
     def friendly_date(self):
@@ -68,7 +66,6 @@ class Post(db.Model):
 
         return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
     
-
 
 class Tag(db.Model):
     """tags"""
@@ -79,22 +76,27 @@ class Tag(db.Model):
                    primary_key=True,
                    autoincrement=True)
     name = db.Column(db.Text,
-                     unique = True)
-    
+                     unique = True,
+                     nullable=False)
 
+    posts = db.relationship(
+        'Post',
+        secondary="posts_tags",
+        cascade="all,delete",
+        backref="tags")    
+    
+    
 class PostTag(db.Model):
     """post_tags"""
 
-    __tablename__ = "post_tags"
+    __tablename__ = "posts_tags"
 
     post_id = db.Column(db.Integer,
-                   db.ForeignKey('posts.id')
-                   primary_key=True,
-                   nullable=False)
-    tag_id = db.Column(db.Text,
-                     db.ForeignKey('tags.id')
-                     primary_key=True,
-                     nullable=False)
+                   db.ForeignKey('posts.id'),
+                   primary_key=True)
+    tag_id = db.Column(db.Integer,
+                     db.ForeignKey('tags.id'),
+                     primary_key=True)
 
 
 
@@ -102,16 +104,19 @@ def example_data():
     """Create some sample data."""
 
     # In case this is run more than once, empty out existing data
-    
+    # Tag.query.delete()
     # Post.query.delete()
-    # for user in User.query.all():
-    #     db.session.delete(user)    
+    for user in User.query.all():
+        db.session.delete(user)    
     # db.session.commit()
     
     # User.query.delete()
-    # for post in Post.query.all():
-    #     db.session.delete(post)   
+    for post in Post.query.all():
+        db.session.delete(post)   
     # db.session.commit()
+    
+    for tag in Tag.query.all():
+        db.session.delete(tag)
     
     # Add sample employees and departments
     user1 = User(first_name='John', last_name='Doe', image_url='https://as2.ftcdn.net/v2/jpg/01/24/41/03/1000_F_124410367_M538eQuhp4ItuXE2RVt5m75kODW2nTZz.jpg')
@@ -121,6 +126,12 @@ def example_data():
     post2 = Post(title='Second Post', content='Good Morning', user_id=1)
     post3 = Post(title='Third Post', content='Good Night', user_id=2)
     post4 = Post(title='Fourth Post', content='I am tired.', user_id=2)
+    
+    tag1 = Tag(name='fun')
+    tag2 = Tag(name='new')
+    tag3 = Tag(name='sad')
+    tag4 = Tag(name='cool')
 
-    db.session.add_all([user1, user2, post1, post2, post3, post4])
+    db.session.add_all([user1, user2, post1, post2, post3, post4, tag1, tag2, tag3, tag4])
+    
     db.session.commit()

@@ -21,17 +21,17 @@
           </div>
         </div>
 
-        {% for tag in tags %}
+        <!-- {% for tag in tags %}
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="" id="{{tag.id}}" name="{{tag.name}}">
           <label class="form-check-label" for="{{tag.id}}">
             {{tag.title}}
           </label>
         </div>
-        {% endfor %}        
+        {% endfor %}         -->
 
+        {% for tag in tags %}
         <div class="form-check">
-          {% for tag in tags %}
           <input class="form-check-input" 
                   type="checkbox" 
                   value="{{tag.id}}" 
@@ -41,8 +41,8 @@
           <label class="form-check-label" for="tag_{{tag.id}}">
             {{tag.name}}
           </label>
-          {% endfor %}
         </div>
+        {% endfor %}
 
 
         <div class="form-group mt-2 mx-2">

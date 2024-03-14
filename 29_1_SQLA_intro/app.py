@@ -15,8 +15,9 @@ app.config['SECRET_KEY'] = "SECRET!"
 
 # Connect to database and sample data to database
 connect_db(app)
-# with app.app_context():
-#     example_data()
+with app.app_context():
+    # db.create_all()
+    example_data()
 
 #debugtoolbar setup
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -133,11 +134,13 @@ def post_form(user_id):
 
     title = request.form['title']
     content = request.form['content']
-    tags = request.form.getlist('tags')
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
 
     post = Post(title=title, content=content, user_id=user_id, tags=tags)
     db.session.add(post)
     db.session.commit()
+    
     flash(f"Post '{post.title}' added.")
 
     return redirect(f'/users/{user_id}')
@@ -148,9 +151,8 @@ def post_detail(post_id):
     """Show a post. Show buttons to edit and delete the post."""
 
     post = Post.query.get_or_404(post_id)
-    tags = Post.query.filter(Post.tags).all()
     
-    return render_template("post_detail.html", post=post, tags=tags)
+    return render_template("post_detail.html", post=post)
 
 
 @app.route("/posts/<int:post_id>/edit")
@@ -172,7 +174,9 @@ def edit_post(post_id):
     post.title = request.form['title']
     post.content = request.form['content']
     post.user_id = post.user_id
-    post.tags = request.form.getlist('tags')
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+    post.tags = tags
 
     db.session.commit()
     flash(f"Post '{post.title}' edited.")
@@ -209,7 +213,7 @@ def tag_list():
 def tag_detail(tag_id):
     """Show detail about a tag. Have links to edit form and to delete."""
 
-    tag = Post.query.get_or_404(tag_id)
+    tag = Tag.query.get_or_404(tag_id)
     
     return render_template("tag_detail.html", tag=tag)
 
