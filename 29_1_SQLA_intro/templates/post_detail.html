@@ -9,7 +9,7 @@
 
     <p>{{post.content}}</p>
 
-    <h4><i>By {{post.users.full_name}}</i></h4>
+    <h4><i>By {{post.users.full_name}} on {{ post.friendly_date }}</i></h4>
 
     {% if post.tags %}
     <h4>

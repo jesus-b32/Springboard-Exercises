@@ -15,9 +15,10 @@ app.config['SECRET_KEY'] = "SECRET!"
 
 # Connect to database and sample data to database
 connect_db(app)
-with app.app_context():
-    # db.create_all()
-    example_data()
+# with app.app_context():
+#     # db.create_all()
+#     example_data()
+    
 
 #debugtoolbar setup
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -230,12 +231,10 @@ def new_tag():
     """Process add form, adds tag, and redirect to tag list."""
     
     name = request.form['name']
-
     tag = Tag(name=name)
     
     db.session.add(tag)
     db.session.commit()
-    # flash(f"User {user.full_name} added.")
 
     return redirect("/tags")
 
@@ -253,11 +252,10 @@ def edit_tag(tag_id):
     """Process edit form, edit tag, and redirects to the tags list."""
 
     tag = Post.query.get_or_404(tag_id)
-
     tag.name = request.form['name']
 
     db.session.commit()
-    # flash(f"Post '{post.title}' edited.")
+
 
     return redirect('/tags')
 
@@ -271,6 +269,5 @@ def delete_tag(tag_id):
     if tag:
         db.session.delete(tag)
         db.session.commit()
-        # flash(f"Post '{post.title} deleted.")
     
     return redirect("/tags")
