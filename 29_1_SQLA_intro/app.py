@@ -1,6 +1,6 @@
 """Blogly application."""
 from flask import Flask, request, redirect, render_template, flash
-from models import db, connect_db, User, Post, example_data, Tag, PostTag
+from models import connect_db, User, Post, db, Tag, testing_data
 from flask_debugtoolbar import DebugToolbarExtension
 
 # flask app config
@@ -15,12 +15,12 @@ app.config['SECRET_KEY'] = "SECRET!"
 
 # Connect to database and sample data to database
 connect_db(app)
-# with app.app_context():
-#     # db.create_all()
-#     example_data()
+with app.app_context():
+    testing_data()
+    
     
 
-#debugtoolbar setup
+# #debugtoolbar setup
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 debug = DebugToolbarExtension(app)

@@ -98,36 +98,30 @@ class PostTag(db.Model):
 
 
 
-def example_data():
-    """Create some sample data."""
+def testing_data():
+#     """Create some sample data."""
 
     # In case this is run more than once, empty out existing data
-    # Tag.query.delete()
+    
+    for user in User.query.all():
+        db.session.delete(user)     
+    db.session.commit()
+    
     
     for tag in Tag.query.all():
         db.session.delete(tag)
-    # Post.query.delete()
-    for post in Post.query.all():
-        db.session.delete(post) 
-        
-    for user in User.query.all():
-        db.session.delete(user)   
-        
-    db.session.commit() # get an integrety error when I run this function more than once in app.py
+    db.session.commit()
     
-    # User.query.delete()  
-    # db.session.commit()
-    
-    # Add sample employees and departments
+    # Add testing data 
     user1 = User(first_name='John', last_name='Doe', image_url='https://as2.ftcdn.net/v2/jpg/01/24/41/03/1000_F_124410367_M538eQuhp4ItuXE2RVt5m75kODW2nTZz.jpg')
     user2 = User(first_name='Jane', last_name='Smith', image_url='https://media.istockphoto.com/id/528415533/vector/emoticon-with-tears-of-joy.jpg?s=612x612&w=0&k=20&c=zt919iGd1ZSJ2kFU0g676iVKLamUXMSjMD2s-NkV8_c=')
     db.session.add_all([user1, user2])    
     db.session.commit()
     
-    post1 = Post(title='First Post', content='Hello World', user_id=1)
-    post2 = Post(title='Second Post', content='Good Morning', user_id=1)
-    post3 = Post(title='Third Post', content='Good Night', user_id=2)
-    post4 = Post(title='Fourth Post', content='I am tired.', user_id=2)
+    post1 = Post(title='First Post', content='Hello World', user_id=user1.id)
+    post2 = Post(title='Second Post', content='Good Morning', user_id=user1.id)
+    post3 = Post(title='Third Post', content='Good Night', user_id=user2.id)
+    post4 = Post(title='Fourth Post', content='I am tired.', user_id=user2.id)
     db.session.add_all([post1, post2, post3, post4])
     db.session.commit()
         

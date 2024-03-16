@@ -1,11 +1,11 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User, Post, example_data
+from models import db, User, Post, testing_data
 
 
 # Use test database and don't clutter tests with SQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogy_test'
 app.config['SQLALCHEMY_ECHO'] = False
 
 
@@ -25,16 +25,21 @@ class BloggyTestCase(TestCase):
         """Stuff to do before every test."""
         
         with app.app_context():
-            # User.query.delete()    
-            # Post.query.delete()  
-            example_data()  
+            # testing_data()  
+            user1 = User(first_name='John', last_name='Doe', image_url='')
+            user2 = User(first_name='Jane', last_name='Smith', image_url='')
+            db.session.add_all([user1, user2])    
+            db.session.commit()
 
         self.client = app.test_client()
             
     def tearDown(self):
         """Clean up any fouled transaction."""
         with app.app_context():
-            db.session.rollback()
+            # db.session.rollback()
+            for user in User.query.all():
+                db.session.delete(user)     
+            db.session.commit()
         
     def test_user_list(self):
         """Test if John Doe is displayed in user list page
@@ -75,11 +80,11 @@ class BloggyTestCase(TestCase):
         """Test if John Doe is deleted from user list page
         """
         with self.client:
-            response = self.client.post("/users/1/delete", follow_redirects=True)
+            response = self.client.post(f"/users/1/delete", follow_redirects=True)
             html = response.get_data(as_text=True)
 
             self.assertEqual(response.status_code, 200)
-            self.assertNotIn('<li><a href="/users/2">John Doe</a></li>', html)
+            self.assertNotIn(f'<li><a href="/users/1">John Doe</a></li>', html)
             
  ################################################################################### Post test                 
     
