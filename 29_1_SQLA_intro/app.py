@@ -18,7 +18,6 @@ connect_db(app)
 with app.app_context():
     testing_data()
     
-    
 
 # #debugtoolbar setup
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
