@@ -4,26 +4,15 @@
 
 {% block content %}
 
-<h1>Add Pet Form</h1>
+<h1 class="text-center">Add Pet Form</h1>
 
-<form method="POST">
-
-    {{ form.hidden_tag() }}
-  
-    {% for field in form
-           if field.widget.input_type != 'hidden' %}
-    <p>
-      {{ field.label }}
-      {{ field }}
-  
-      {% for error in field.errors %}
-      {{ error }}
-      {% endfor %}
-    </p>
-    {% endfor %}
-  
-    <button type="submit" class="btn btn-primary">Submit</button>
-  
-</form>
+<div class="container">
+    <div class="row">
+        <form method="POST">
+            {% include "form.html" %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

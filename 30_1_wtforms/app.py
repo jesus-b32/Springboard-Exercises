@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, render_template
+from flask import Flask, render_template, flash, redirect, render_template, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, Pet, testing_data
 
@@ -20,7 +20,7 @@ connect_db(app)
 
 @app.route("/")
 def homepage():
-    """Show homepage links."""
+    """Show homepage with pet list."""
     
     pets = Pet.query.all()
 
@@ -29,26 +29,31 @@ def homepage():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_pet():
-    """Snack add form; handle adding."""
+    """Pet add form; handle adding."""
 
     form = AddPetForm()
 
     if form.validate_on_submit():
-        name = form.name.data
-        species = form.species.data
-        photo_url = form.photo_url.data
-        age = form.age.data
-        notes = form.notes.data
+        # name = form.name.data
+        # species = form.species.data
+        # photo_url = form.photo_url.data
+        # age = form.age.data
+        # notes = form.notes.data
         
-        pet = Pet(name = name,
-                  species = species,
-                  photo_url = photo_url,
-                  age = age,
-                  notes = notes)
+        # pet = Pet(name = name,
+        #           species = species,
+        #           photo_url = photo_url,
+        #           age = age,
+        #           notes = notes)
+        
+        #alternative way of extracting field data shown above
+        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        pet = Pet(**data)
+        
         db.session.add(pet)
         db.session.commit()
-        # flash(f"Added {name} at {price}")
-        return redirect("/add")
+
+        return redirect(url_for('homepage'))
 
     else:
         return render_template("add_pet.html", form=form)
@@ -56,7 +61,7 @@ def add_pet():
 
 @app.route("/<int:pet_id>", methods=["GET", "POST"])
 def edit_pet(pet_id):
-    """Show user edit form and handle edit."""
+    """Show pet edit form and handle edit."""
 
     pet = Pet.query.get_or_404(pet_id)
     form = EditPetForm(obj=pet)
@@ -66,8 +71,8 @@ def edit_pet(pet_id):
         pet.notes = form.notes.data
         pet.available = form.available.data
         db.session.commit()
-        # flash(f"User {uid} updated!")
-        return redirect(f"/{pet_id}")
+
+        return redirect(url_for('homepage'))
 
     else:
         return render_template("edit.html", form=form, pet=pet)
