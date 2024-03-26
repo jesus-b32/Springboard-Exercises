@@ -35,18 +35,20 @@ class CupcakeViewsTestCase(TestCase):
 
     def setUp(self):
         """Make demo data."""
-        with app.app_context():
+        
+        with app.test_request_context():
             Cupcake.query.delete()
 
             cupcake = Cupcake(**CUPCAKE_DATA)
             db.session.add(cupcake)
             db.session.commit()
-
+        with app.test_request_context():   
             self.cupcake = cupcake
+            db.session.merge(self.cupcake)
 
     def tearDown(self):
         """Clean up fouled transactions."""
-        with app.app_context():
+        with app.test_request_context():
             db.session.rollback()
 
     def test_list_cupcakes(self):

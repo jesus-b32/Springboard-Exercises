@@ -20,13 +20,14 @@ connect_db(app)
 #     seeding_data()
     
 
-# @app.route("/")
-# def homepage():
-#     """Show homepage with pet list."""
-    
-#     pets = Pet.query.all()
+@app.route("/")
+def homepage():
+    """This should return an HTML page. 
+    This page should be entirely static (the route should just render the template, without providing any information on cupcakes in the database). 
+    It should show simply have an empty list where cupcakes should appear and a form where new cupcakes can be added.
+    """
 
-#     return render_template("homepage.html", pets=pets)
+    return render_template("homepage.html")
 
 
 @app.route("/api/cupcakes")
