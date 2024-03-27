@@ -3,7 +3,7 @@ const cupcakeList = document.querySelector('#cupcake_list');
 const BASE_URL = "http://127.0.0.1:5000/api";
 
 
-/** given data about a cupcake, generate html */
+/** Generate html using cupcake data*/
 function generateCupcakeHTML(cupcake) {
     return `
         <li data-cupcake-id="${cupcake.id}">
@@ -17,7 +17,7 @@ function generateCupcakeHTML(cupcake) {
 }
 
 
-// Use Giphy API to retrive a GIF using a search term. Also will handel any error if encountered
+/** Display the cupcake list stored in database*/
 async function showCupcakeList () {
     try {
         const response = await axios.get(`${BASE_URL}/cupcakes`);
@@ -33,7 +33,7 @@ async function showCupcakeList () {
 
 
 
-// get search term from user input submit, send to API, and apend the GIF recieved from API
+/** Store cupcake form data and send a post request to add this new cupcake to database. Also add the new cupcake to html page*/
 async function cupcakeFormHandler(e) {
     e.preventDefault();
 
@@ -54,7 +54,7 @@ async function cupcakeFormHandler(e) {
 }
 
 
-// Use Giphy API to retrive a GIF using a search term. Also will handel any error if encountered
+/** Delete a cupcake when a delete button is clicked on and submit a DELETE request. Remove that cupcake from HTML page*/
 async function deleteCupcake (e) {
     e.preventDefault();
 
@@ -65,7 +65,7 @@ async function deleteCupcake (e) {
     const cupcake_id = e.target.parentElement.dataset.cupcakeId;
 
     try {
-        const response = await axios.delete(`${BASE_URL}/cupcakes/${cupcake_id}`);
+        await axios.delete(`${BASE_URL}/cupcakes/${cupcake_id}`);
 
         e.target.parentElement.remove();
     } catch(e) {
@@ -73,6 +73,7 @@ async function deleteCupcake (e) {
     }
 }
 
+/** Display cupcake list and listen for form submission and delete button clicks*/
 showCupcakeList();
 cupcakeForm.addEventListener('submit', cupcakeFormHandler);
 cupcakeList.addEventListener('click', deleteCupcake);
