@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -49,7 +49,6 @@ def register_user():
         
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
         user = User.register(**data)
-        # user = User(**data)
         
         db.session.add(user)
         try:
@@ -62,6 +61,24 @@ def register_user():
         return redirect('/register')
 
     return render_template('register.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        user = User.authenticate(username, password)
+        if user:
+            flash(f"Welcome Back, {user.username}!", "primary")
+            # session['user_id'] = user.id
+            return redirect('/secret')
+        else:
+            form.username.errors = ['Invalid username/password.']
+
+    return render_template('login.html', form=form)
 
 
 # @app.route('/register', methods=['GET', 'POST'])
@@ -96,24 +113,6 @@ def register_user():
 #         return redirect('/tweets')
 #     flash("You don't have permission to do that!", "danger")
 #     return redirect('/tweets')
-
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login_user():
-#     form = UserForm()
-#     if form.validate_on_submit():
-#         username = form.username.data
-#         password = form.password.data
-
-#         user = User.authenticate(username, password)
-#         if user:
-#             flash(f"Welcome Back, {user.username}!", "primary")
-#             session['user_id'] = user.id
-#             return redirect('/tweets')
-#         else:
-#             form.username.errors = ['Invalid username/password.']
-
-#     return render_template('login.html', form=form)
 
 
 # @app.route('/logout')
