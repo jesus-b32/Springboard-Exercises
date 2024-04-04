@@ -38,6 +38,10 @@ def register_user():
     Process the registration form by adding a new user.
     Then redirect to /secret
     """
+    if "username" in session:
+        username = session['username']
+        return redirect(f'/users/{username}')
+    
     form = RegisterForm()
     if form.validate_on_submit():    
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
@@ -65,6 +69,10 @@ def login_user():
     POST:
     Process the login form, ensuring the user is authenticated and going to /secret if so.
     """
+    if "username" in session:
+        username = session['username']
+        return redirect(f'/users/{username}')
+        
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -95,19 +103,31 @@ def show_secret(username):
         return redirect('/')
     user = User.query.get_or_404(username)
     feedbacks = Feedback.query.filter_by(username=username)
-    # form = TweetForm()
-    # all_tweets = Tweet.query.all()
-    # if form.validate_on_submit():
-    #     text = form.text.data
-    #     new_tweet = Tweet(text=text, user_id=session['user_id'])
-    #     db.session.add(new_tweet)
-    #     db.session.commit()
-    #     flash('Tweet Created!', 'success')
-    #     return redirect('/tweets')
 
-    # return render_template("tweets.html", form=form, tweets=all_tweets)
     return render_template('user_info.html', user=user,
                            feedbacks=feedbacks)
+
+@app.route('/users/<username>/delete', methods=["POST"])
+def delete_user(username):
+    """Remove the user from the database and make sure to also delete all of their feedback.
+    Clear any user information in the session and redirect to /.
+    Make sure that only the user who is logged in can successfully delete their account.
+    """
+    if 'username' not in session:
+        flash("Please login first!", "danger")
+        return redirect('/')
+    
+    user = User.query.get_or_404(username)
+    if user.username == session['username']:
+        session.pop('username')
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash("User deleted!", "info")
+        return redirect('/')
+    flash("You don't have permission to do that!", "danger")
+    return redirect(f'/users/{user.username}')
+
 
 
 @app.route('/users/<username>/feedback/add', methods=['GET', 'POST'])
@@ -139,6 +159,55 @@ def add_feedback(username):
     return render_template('feedback.html', form=form)
 
 
+
+@app.route('/feedback/<feedback_id>/update', methods=['GET', 'POST'])
+def update_feedback(feedback_id):
+    """
+    GET:
+    Display a form to edit feedback.
+    Make sure that only the user who has written that feedback can see this form.
+    
+    POST:
+    Update a specific piece of feedback and redirect to /users/<username>
+    Make sure that only the user who has written that feedback can update it.
+    """
+    if "username" not in session:
+        flash("Please login first!", "danger")
+        return redirect('/')
+    
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        feedback = Feedback.query.get_or_404(feedback_id)
+        feedback.title = form.title.data
+        feedback.content = form.content.data
+
+        db.session.commit()
+        
+        return redirect(f'/users/{feedback.username}')
+
+    return render_template('feedback.html', form=form)
+
+
+@app.route('/feedback/<feedback_id>/delete', methods=["POST"])
+def delete_feeback(feedback_id):
+    """Delete a specific piece of feedback and redirect to /users/<username>
+    Make sure that only the user who has written that feedback can delete it.
+    """
+    if 'username' not in session:
+        flash("Please login first!", "danger")
+        return redirect('/')
+    
+    feedback = Feedback.query.get_or_404(feedback_id)
+    if feedback.username == session['username']:
+        db.session.delete(feedback)
+        db.session.commit()
+        
+        flash("Feedback deleted!", "info")
+        return redirect(f'/users/{feedback.username}')
+    flash("You don't have permission to do that!", "danger")
+    return redirect(f'/users/{feedback.username}')
+
+
 @app.route('/logout')
 def logout_user():
     """
@@ -147,20 +216,3 @@ def logout_user():
     session.pop('username')
     flash("Goodbye!", "info")
     return redirect('/')
-
-
-
-# @app.route('/tweets/<int:id>', methods=["POST"])
-# def delete_tweet(id):
-#     """Delete tweet"""
-#     if 'user_id' not in session:
-#         flash("Please login first!", "danger")
-#         return redirect('/login')
-#     tweet = Tweet.query.get_or_404(id)
-#     if tweet.user_id == session['user_id']:
-#         db.session.delete(tweet)
-#         db.session.commit()
-#         flash("Tweet deleted!", "info")
-#         return redirect('/tweets')
-#     flash("You don't have permission to do that!", "danger")
-#     return redirect('/tweets')

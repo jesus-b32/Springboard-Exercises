@@ -3,8 +3,9 @@
 {% block content %}
 
 <div class="container">
-    <h1 class="display-1 text-center">User Info</h1>
+    <h1 class="display-1 text-center">User Page</h1>
 
+    <h2>User Info</h2>
     <ul>
         <li>Username: {{user.username}}</li>
         <li>Email: {{user.email}}</li>
@@ -12,11 +13,25 @@
         <li>Last Name: {{user.last_name}}</li>
     </ul>
 
+    <form action="/users/{{user.username}}/delete" method="post">
+        <button type="submit" class="btn btn-danger btn-sm">
+            Delete User
+        </button>
+    </form>
+
     <h2>Feedback</h2>
 
     {% for feedback in feedbacks %}
         <div>
-            <p>Title: {{feedback.title}} <a href="/feedback/<feedback-id>/update" class="btn btn-primary">Edit</a></p>
+            <p>
+                Title: {{feedback.title}} 
+                <form action="/feedback/{{feedback.id}}/delete" method="post" class="form-inline">
+                    <a href="/feedback/{{feedback.id}}/update" class="btn btn-primary btn-sm">Edit</a> 
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Delete
+                    </button>
+                </form>
+            </p>
             <p>Content: {{feedback.content}}</p>
         </div>
     {% endfor %}
